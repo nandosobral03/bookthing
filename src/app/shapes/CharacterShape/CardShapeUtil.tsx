@@ -30,7 +30,7 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
         return {
             w: 300,
             h: 300,
-            type: "man1"
+            type: "1"
         }
     }
 
@@ -47,7 +47,7 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
         const bounds = this.editor.getShapeGeometry(shape).bounds
         return (
             <>
-                <img src={`/icons/${shape.props.type}.svg`} style={{ width: bounds.width, height: bounds.height }} />
+                <img src={`/icons/character${shape.props.type}.svg`} style={{ width: bounds.width, height: bounds.height }} />
             </>
         )
     }
