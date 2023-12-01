@@ -9,6 +9,7 @@ import {
   TLImageAsset,
   TLVideoAsset,
 } from "@tldraw/tldraw";
+import SingleAssetElement from "./SingleAssetElement";
 
 export type AddAssetPanelProps = {
   showAssetPanel: boolean;
@@ -26,10 +27,7 @@ export default function AddAssetPanel({
   editor,
 }: AddAssetPanelProps) {
   const [assetUrl, setAssetUrl] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [newName, setNewName] = useState<string>("");
   const [refresher, setRefresher] = useState<number>(0); // [TODO] Remove this when we have a better way to refresh the asset panel
-  const [isEditing, setIsEditing] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   const validateUrl = (url: string) => {
     if (url.startsWith("https://") || url.startsWith("http://")) {
@@ -66,19 +64,6 @@ export default function AddAssetPanel({
     };
   }, [showAssetPanel]);
 
-  const handleKeyUp = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    asset: TLImageAsset | TLVideoAsset | TLBookmarkAsset
-  ) => {
-    if (e.key === "Enter") {
-      editor.updateAssets([
-        // @ts-ignore
-        { id: asset.id, props: { ...asset.props, name: newName.trim() } },
-      ]);
-      setIsEditing("");
-    }
-  };
-
   return (
     <AnimatePresence>
       {showAssetPanel && (
@@ -96,20 +81,26 @@ export default function AddAssetPanel({
             shadow-sm p-4 flex flex-col gap-2"
           >
             <div className="flex justify-between items-center gap-2">
-              <h1 className="text-2xl">Add new asset</h1>
+              <h1 className="text-xl">Assets</h1>
               <button onClick={() => setShowAssetPanel(false)}>
                 <Cross1Icon />
               </button>
             </div>
+          </div>
+          <div
+            className="pointer-events-auto 
+            w-96 h-fit rounded-md  bg-gray-200 
+            shadow-sm p-4 flex  gap-2"
+          >
             <input
               ref={inputRef}
               type="text"
               value={assetUrl}
               onChange={(e) => setAssetUrl(e.target.value)}
-              className="border-2 border-gray-400 rounded-md p-2"
+              className="border-2 border-gray-400 rounded-md p-2 grow justify-center"
             />
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-32 self-end"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-16 self-end h-full"
               onClick={() => handleSubmit()}
             >
               Add
@@ -121,53 +112,13 @@ export default function AddAssetPanel({
             shadow-sm p-4 flex flex-col gap-2"
           >
             {editor.assets.map((asset) => (
-              <div key={asset.id} className="flex items-center gap-2">
-                <img
-                  src={asset.props.src || ""}
-                  className="w-10 h-10"
-                  alt="asset"
-                />
-                {isEditing === asset.id ? (
-                  <input
-                    type="text"
-                    value={newName}
-                    onKeyUp={(e) => handleKeyUp(e, asset)}
-                    onChange={(e) => setNewName(e.target.value)}
-                    className="border-2 border-gray-400 rounded-md p-2"
-                  />
-                ) : (
-                  <p>{(asset.props as any).name || "Untitled"}</p>
-                )}
-                <button
-                  className="ml-auto"
-                  onClick={() => {
-                    if (isEditing === asset.id) {
-                      setIsEditing("");
-                      editor.updateAssets([
-                        // @ts-ignore
-                        {
-                          id: asset.id,
-                          props: { ...asset.props, name: newName.trim() },
-                        },
-                      ]);
-                    } else {
-                      setIsEditing(asset.id);
-                      setNewName((asset.props as any).name || "Untitled");
-                    }
-                  }}
-                >
-                  {isEditing === asset.id ? <CheckIcon /> : <Pencil1Icon />}
-                </button>
-
-                <button
-                  onClick={() => {
-                    editor.deleteAssets([asset.id]);
-                    setRefresher(refresher + 1);
-                  }}
-                >
-                  <Cross1Icon />
-                </button>
-              </div>
+              <SingleAssetElement
+                asset={asset}
+                editor={editor}
+                refresher={refresher}
+                setRefresher={setRefresher}
+                setIsTyping={setIsTyping}
+              />
             ))}
           </div>
         </motion.div>
