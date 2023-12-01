@@ -25,6 +25,7 @@ import { useEffect, useRef, useState } from "react";
 
 import AddAssetPanel from "./AddAssetPanel";
 import CharacterPickerOverlap from "./CharacterPickerOverlap";
+import ChapterSelector from "./ChapterSelector";
 
 type TLDrawToolId =
   | "select"
@@ -350,6 +351,7 @@ export default function BookUI({}: BookUIProps) {
           ))}
         </div>
       </div>
+      <ChapterSelector editor={editor} />
     </>
   );
 }

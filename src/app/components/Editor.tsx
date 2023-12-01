@@ -16,6 +16,7 @@ import BookUI from "./BookUI";
 import { CardShapeTool } from "../shapes/CharacterShape/CardShapeTool";
 import { CardShapeUtil } from "../shapes/CharacterShape/CardShapeUtil";
 import { useCallback } from "react";
+import ChapterSelector from "./ChapterSelector";
 
 const customShapeUtils = [CardShapeUtil];
 const customTools = [CardShapeTool];
